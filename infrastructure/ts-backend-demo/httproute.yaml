@@ -8,7 +8,7 @@ spec:
       namespace: routing
   hostnames:
     - ts-backend-demo.home.lab
-    - ts-backend-demo.k8s.rubenspensky.com
+    - ts-backend-demo.rubenspensky.com
   rules:
     - matches:
         - path:
