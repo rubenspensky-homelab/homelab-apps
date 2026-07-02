@@ -4,8 +4,8 @@ metadata:
   name: ts-backend-demo
 spec:
   parentRefs:
-    - name: default
-      namespace: default
+    - name: homelab-gateway
+      namespace: routing
   hostnames:
     - ts-backend-demo.home.lab
   rules:
