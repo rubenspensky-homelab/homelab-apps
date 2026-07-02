@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ts-backend-demo-config
+data:
+  PORT: "8080"
+  SERVICE_NAME: ts-backend-demo
+  NODE_ENV: dev
