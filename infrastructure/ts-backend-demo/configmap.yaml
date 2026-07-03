@@ -7,4 +7,4 @@ data:
   SERVICE_NAME: ts-backend-demo
   NODE_ENV: dev
   OTEL_SERVICE_NAME: ts-backend-demo
-  OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://alloy.logging.svc.cluster.local:4317"
+  OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://alloy.logging.svc.cluster.local:4318/v1/traces"
