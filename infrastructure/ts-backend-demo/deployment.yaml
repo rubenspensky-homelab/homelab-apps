@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: ts-backend-demo
-          image: ghcr.io/rubenspensky-homelab/ts-backend-demo:88608ce52347ac058757f38b7a78fa3d13aff0da
+          image: ghcr.io/rubenspensky-homelab/ts-backend-demo:63535129e2f07ddd4773e0023a8ff3a171a6bc20
           imagePullPolicy: Always
           ports:
             - name: http
