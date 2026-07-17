@@ -5,6 +5,8 @@ metadata:
 data:
   PORT: "8080"
   SERVICE_NAME: ts-backend-demo
+  SERVICE_DESCRIPTION: TypeScript backend demo service.
+  SERVICE_VERSION: 1.0.0
   NODE_ENV: dev
   OTEL_SERVICE_NAME: ts-backend-demo
   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://alloy.logging.svc.cluster.local:4318/v1/traces"
