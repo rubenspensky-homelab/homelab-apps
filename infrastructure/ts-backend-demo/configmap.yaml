@@ -12,6 +12,7 @@ data:
   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://alloy.logging.svc.cluster.local:4318/v1/traces"
   METRICS_ENABLED: "true"
   TRACING_ENABLED: "true"
+  PUBLIC_BASE_URLS: https://ts-backend-demo.rubenspensky.com|External,http://ts-backend-demo.home.lab|Internal
 
   # OIDC / Authentik
   AUTH_PROVIDER: oidc
