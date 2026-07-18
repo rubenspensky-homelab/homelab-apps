@@ -19,12 +19,12 @@ data:
 
   # OIDC / Authentik
   AUTH_PROVIDER: oidc
-  AUTH_ISSUER: https://auth.rubenspensky.com/application/o/frontend-test/
-  AUTH_JWKS_URL: https://auth.rubenspensky.com/application/o/frontend-test/jwks/
-  AUTH_AUDIENCE: L9JCsgnMIb4CgTE3G4eSe8J5aWDTphvbpX9NM7ui
+  AUTH_ISSUER: https://auth.rubenspensky.com/
+  AUTH_JWKS_URL: https://auth.rubenspensky.com/application/o/frontend-demo/jwks/
+  AUTH_AUDIENCE: frontend-demo
 
   # Scalar API docs OAuth testing
-  DOCS_OAUTH_CLIENT_ID: L9JCsgnMIb4CgTE3G4eSe8J5aWDTphvbpX9NM7ui
+  DOCS_OAUTH_CLIENT_ID: frontend-demo
   DOCS_OAUTH_AUTHORIZATION_URL: https://ts-backend-demo.rubenspensky.com/docs/oauth/authorize
   DOCS_OAUTH_UPSTREAM_AUTHORIZATION_URL: https://auth.rubenspensky.com/application/o/authorize/
   DOCS_OAUTH_TOKEN_URL: https://auth.rubenspensky.com/application/o/token/
