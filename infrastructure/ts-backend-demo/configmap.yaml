@@ -13,6 +13,9 @@ data:
   METRICS_ENABLED: "true"
   TRACING_ENABLED: "true"
   PUBLIC_BASE_URLS: "https://ts-backend-demo.rubenspensky.com|External,http://ts-backend-demo.home.lab|Internal"
+  # CORS
+  CORS_ENABLED: "true"
+  CORS_ALLOWED_ORIGINS: "http://localhost:5173,http://localhost:3000,https://ts-backend-demo.rubenspensky.com,http://ts-backend-demo.home.lab"
 
   # OIDC / Authentik
   AUTH_PROVIDER: oidc
