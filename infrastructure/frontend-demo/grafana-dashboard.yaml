@@ -1,0 +1,409 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: frontend-observability
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: frontend-telemetry-demo
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: prometheus-stack-grafana
+  folder: Homelab
+  resyncPeriod: 10m
+  json: |
+    {
+      "title": "Frontend Observability",
+      "uid": "frontend-observability",
+      "timezone": "browser",
+      "schemaVersion": 39,
+      "version": 1,
+      "refresh": "30s",
+      "editable": true,
+      "tags": ["homelab", "frontend", "faro", "observability", "public"],
+      "time": {
+        "from": "now-6h",
+        "to": "now"
+      },
+      "templating": {
+        "list": []
+      },
+      "panels": [
+        {
+          "id": 1,
+          "type": "row",
+          "title": "Frontend Health",
+          "gridPos": { "x": 0, "y": 0, "w": 24, "h": 1 },
+          "collapsed": false,
+          "panels": []
+        },
+        {
+          "id": 2,
+          "type": "stat",
+          "title": "Frontend Errors",
+          "gridPos": { "x": 0, "y": 1, "w": 6, "h": 4 },
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "targets": [
+            {
+              "expr": "sum(count_over_time({source=\"faro\"} | json | app_name=\"frontend-telemetry-demo\" | kind=\"exception\" [$__range]))",
+              "queryType": "instant",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "noValue": "0",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 1 },
+                  { "color": "red", "value": 6 }
+                ]
+              }
+            }
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" },
+            "textMode": "auto"
+          }
+        },
+        {
+          "id": 3,
+          "type": "timeseries",
+          "title": "Frontend Errors / min",
+          "gridPos": { "x": 6, "y": 1, "w": 6, "h": 4 },
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "targets": [
+            {
+              "expr": "sum(rate({source=\"faro\"} | json | app_name=\"frontend-telemetry-demo\" | kind=\"exception\" [5m])) * 60",
+              "legendFormat": "errors/min",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "errors/min",
+              "decimals": 2,
+              "min": 0,
+              "custom": { "drawStyle": "line", "showPoints": "never", "lineWidth": 2, "fillOpacity": 10 }
+            }
+          },
+          "options": {
+            "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true },
+            "tooltip": { "mode": "single", "sort": "none" }
+          }
+        },
+        {
+          "id": 4,
+          "type": "stat",
+          "title": "Poor Web Vitals",
+          "gridPos": { "x": 12, "y": 1, "w": 6, "h": 4 },
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "targets": [
+            {
+              "expr": "sum(count_over_time({source=\"faro\"} | json | app_name=\"frontend-telemetry-demo\" | kind=\"measurement\" | type=\"web-vitals\" | context_rating=\"poor\" [$__range]))",
+              "queryType": "instant",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "noValue": "0",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 1 },
+                  { "color": "red", "value": 5 }
+                ]
+              }
+            }
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" },
+            "textMode": "auto"
+          }
+        },
+        {
+          "id": 5,
+          "type": "stat",
+          "title": "Frontend Telemetry Events",
+          "gridPos": { "x": 18, "y": 1, "w": 6, "h": 4 },
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "targets": [
+            {
+              "expr": "sum(count_over_time({source=\"faro\"} | json | app_name=\"frontend-telemetry-demo\" | kind=~\"measurement|exception\" [$__range]))",
+              "queryType": "instant",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "noValue": "0",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null }
+                ]
+              }
+            }
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" },
+            "textMode": "auto"
+          }
+        },
+        {
+          "id": 6,
+          "type": "row",
+          "title": "Core Web Vitals",
+          "gridPos": { "x": 0, "y": 5, "w": 24, "h": 1 },
+          "collapsed": false,
+          "panels": []
+        },
+        {
+          "id": 7,
+          "type": "stat",
+          "title": "LCP P95",
+          "gridPos": { "x": 0, "y": 6, "w": 8, "h": 4 },
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "targets": [
+            {
+              "expr": "max(quantile_over_time(0.95, {source=\"faro\"} | json | app_name=\"frontend-telemetry-demo\" | kind=\"measurement\" | type=\"web-vitals\" | value_lcp != \"\" | unwrap value_lcp | __error__=\"\" [$__range]))",
+              "queryType": "instant",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ms",
+              "decimals": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 2500 },
+                  { "color": "red", "value": 4000 }
+                ]
+              }
+            }
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" },
+            "textMode": "auto"
+          }
+        },
+        {
+          "id": 8,
+          "type": "stat",
+          "title": "INP P95",
+          "gridPos": { "x": 8, "y": 6, "w": 8, "h": 4 },
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "targets": [
+            {
+              "expr": "max(quantile_over_time(0.95, {source=\"faro\"} | json | app_name=\"frontend-telemetry-demo\" | kind=\"measurement\" | type=\"web-vitals\" | value_inp != \"\" | unwrap value_inp | __error__=\"\" [$__range]))",
+              "queryType": "instant",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ms",
+              "decimals": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 200 },
+                  { "color": "red", "value": 500 }
+                ]
+              }
+            }
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" },
+            "textMode": "auto"
+          }
+        },
+        {
+          "id": 9,
+          "type": "stat",
+          "title": "TTFB P95",
+          "gridPos": { "x": 16, "y": 6, "w": 8, "h": 4 },
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "targets": [
+            {
+              "expr": "max(quantile_over_time(0.95, {source=\"faro\"} | json | app_name=\"frontend-telemetry-demo\" | kind=\"measurement\" | type=\"web-vitals\" | value_ttfb != \"\" | unwrap value_ttfb | __error__=\"\" [$__range]))",
+              "queryType": "instant",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ms",
+              "decimals": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 800 },
+                  { "color": "red", "value": 1800 }
+                ]
+              }
+            }
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "reduceOptions": { "values": false, "calcs": ["lastNotNull"], "fields": "" },
+            "textMode": "auto"
+          }
+        },
+        {
+          "id": 10,
+          "type": "row",
+          "title": "Web Vitals Over Time",
+          "gridPos": { "x": 0, "y": 10, "w": 24, "h": 1 },
+          "collapsed": false,
+          "panels": []
+        },
+        {
+          "id": 11,
+          "type": "timeseries",
+          "title": "LCP P95 Over Time",
+          "gridPos": { "x": 0, "y": 11, "w": 8, "h": 8 },
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "targets": [
+            {
+              "expr": "max(quantile_over_time(0.95, {source=\"faro\"} | json | app_name=\"frontend-telemetry-demo\" | kind=\"measurement\" | type=\"web-vitals\" | value_lcp != \"\" | unwrap value_lcp | __error__=\"\" [5m]))",
+              "legendFormat": "LCP p95",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "ms", "decimals": 0, "min": 0, "custom": { "drawStyle": "line", "showPoints": "never", "lineWidth": 2, "fillOpacity": 10 } }
+          },
+          "options": {
+            "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true },
+            "tooltip": { "mode": "single", "sort": "none" }
+          }
+        },
+        {
+          "id": 12,
+          "type": "timeseries",
+          "title": "INP P95 Over Time",
+          "gridPos": { "x": 8, "y": 11, "w": 8, "h": 8 },
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "targets": [
+            {
+              "expr": "max(quantile_over_time(0.95, {source=\"faro\"} | json | app_name=\"frontend-telemetry-demo\" | kind=\"measurement\" | type=\"web-vitals\" | value_inp != \"\" | unwrap value_inp | __error__=\"\" [5m]))",
+              "legendFormat": "INP p95",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "ms", "decimals": 0, "min": 0, "custom": { "drawStyle": "line", "showPoints": "never", "lineWidth": 2, "fillOpacity": 10 } }
+          },
+          "options": {
+            "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true },
+            "tooltip": { "mode": "single", "sort": "none" }
+          }
+        },
+        {
+          "id": 13,
+          "type": "timeseries",
+          "title": "TTFB P95 Over Time",
+          "gridPos": { "x": 16, "y": 11, "w": 8, "h": 8 },
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "targets": [
+            {
+              "expr": "max(quantile_over_time(0.95, {source=\"faro\"} | json | app_name=\"frontend-telemetry-demo\" | kind=\"measurement\" | type=\"web-vitals\" | value_ttfb != \"\" | unwrap value_ttfb | __error__=\"\" [5m]))",
+              "legendFormat": "TTFB p95",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "ms", "decimals": 0, "min": 0, "custom": { "drawStyle": "line", "showPoints": "never", "lineWidth": 2, "fillOpacity": 10 } }
+          },
+          "options": {
+            "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true },
+            "tooltip": { "mode": "single", "sort": "none" }
+          }
+        },
+        {
+          "id": 14,
+          "type": "row",
+          "title": "Error Summary",
+          "gridPos": { "x": 0, "y": 19, "w": 24, "h": 1 },
+          "collapsed": false,
+          "panels": []
+        },
+        {
+          "id": 15,
+          "type": "barchart",
+          "title": "Errors by Page",
+          "gridPos": { "x": 0, "y": 20, "w": 12, "h": 8 },
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "targets": [
+            {
+              "expr": "topk(10, sum by (page_url) (count_over_time({source=\"faro\"} | json | app_name=\"frontend-telemetry-demo\" | kind=\"exception\" [$__range])))",
+              "queryType": "instant",
+              "legendFormat": "{{page_url}}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "short", "decimals": 0, "min": 0 }
+          },
+          "options": {
+            "legend": { "displayMode": "list", "placement": "bottom", "showLegend": false },
+            "tooltip": { "mode": "single", "sort": "none" }
+          }
+        },
+        {
+          "id": 16,
+          "type": "barchart",
+          "title": "Errors by Type",
+          "gridPos": { "x": 12, "y": 20, "w": 12, "h": 8 },
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "targets": [
+            {
+              "expr": "topk(10, sum by (type) (count_over_time({source=\"faro\"} | json | app_name=\"frontend-telemetry-demo\" | kind=\"exception\" [$__range])))",
+              "queryType": "instant",
+              "legendFormat": "{{type}}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "short", "decimals": 0, "min": 0 }
+          },
+          "options": {
+            "legend": { "displayMode": "list", "placement": "bottom", "showLegend": false },
+            "tooltip": { "mode": "single", "sort": "none" }
+          }
+        }
+      ]
+    }
