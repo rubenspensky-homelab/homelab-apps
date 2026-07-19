@@ -1,0 +1,274 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: ts-backend-demo
+  # Ajusta este namespace al namespace donde tu Grafana Operator busca dashboards.
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: ts-backend-demo
+spec:
+  # Ajusta este selector para que matchee tu recurso Grafana.
+  instanceSelector:
+    matchLabels:
+      dashboards: prometheus-stack-grafana
+  folder: Homelab
+  resyncPeriod: 10m
+  json: |
+    {
+      "title": "ts-backend-demo",
+      "uid": "ts-backend-demo",
+      "timezone": "browser",
+      "schemaVersion": 39,
+      "version": 1,
+      "refresh": "30s",
+      "editable": true,
+      "tags": ["homelab", "backend", "typescript", "kubernetes"],
+      "time": {
+        "from": "now-15m",
+        "to": "now"
+      },
+      "templating": {
+        "list": []
+      },
+      "panels": [
+        {
+          "id": 1,
+          "type": "stat",
+          "title": "Requests/min",
+          "gridPos": { "x": 0, "y": 0, "w": 5, "h": 4 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [
+            {
+              "expr": "sum(rate(http_requests_total{namespace=\"default\", service=\"ts-backend-demo\"}[5m])) * 60",
+              "legendFormat": "requests/min",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "short", "decimals": 1 }
+          }
+        },
+        {
+          "id": 2,
+          "type": "stat",
+          "title": "Errores/min",
+          "gridPos": { "x": 5, "y": 0, "w": 5, "h": 4 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [
+            {
+              "expr": "sum(rate(http_requests_total{namespace=\"default\", service=\"ts-backend-demo\", status_code=~\"[45]..\"}[5m])) * 60",
+              "legendFormat": "errors/min",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "short", "decimals": 1 }
+          }
+        },
+        {
+          "id": 3,
+          "type": "stat",
+          "title": "% Errores",
+          "gridPos": { "x": 10, "y": 0, "w": 5, "h": 4 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [
+            {
+              "expr": "100 * sum(rate(http_requests_total{namespace=\"default\", service=\"ts-backend-demo\", status_code=~\"[45]..\"}[5m])) / clamp_min(sum(rate(http_requests_total{namespace=\"default\", service=\"ts-backend-demo\"}[5m])), 0.001)",
+              "legendFormat": "error rate",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "percent", "decimals": 1 }
+          }
+        },
+        {
+          "id": 4,
+          "type": "stat",
+          "title": "CPU % límite",
+          "gridPos": { "x": 15, "y": 0, "w": 4, "h": 4 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [
+            {
+              "expr": "100 * sum(rate(container_cpu_usage_seconds_total{namespace=\"default\", pod=~\"ts-backend-demo-.*\", container=\"ts-backend-demo\"}[5m])) / sum(kube_pod_container_resource_limits{namespace=\"default\", pod=~\"ts-backend-demo-.*\", container=\"ts-backend-demo\", resource=\"cpu\", unit=\"core\"})",
+              "legendFormat": "cpu limit used",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "percent", "decimals": 1 }
+          }
+        },
+        {
+          "id": 12,
+          "type": "stat",
+          "title": "Memoria % límite",
+          "gridPos": { "x": 19, "y": 0, "w": 5, "h": 4 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [
+            {
+              "expr": "100 * sum(container_memory_working_set_bytes{namespace=\"default\", pod=~\"ts-backend-demo-.*\", container=\"ts-backend-demo\"}) / sum(kube_pod_container_resource_limits{namespace=\"default\", pod=~\"ts-backend-demo-.*\", container=\"ts-backend-demo\", resource=\"memory\", unit=\"byte\"})",
+              "legendFormat": "memory limit used",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "percent", "decimals": 1 }
+          }
+        },
+        {
+          "id": 5,
+          "type": "timeseries",
+          "title": "Requests/min por ruta",
+          "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [
+            {
+              "expr": "sum by (method, route, status_code) (rate(http_requests_total{namespace=\"default\", service=\"ts-backend-demo\"}[5m])) * 60",
+              "legendFormat": "{{method}} {{route}} {{status_code}}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "short", "decimals": 1 }
+          }
+        },
+        {
+          "id": 13,
+          "type": "timeseries",
+          "title": "Errores/min por ruta",
+          "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [
+            {
+              "expr": "sum by (method, route, status_code) (rate(http_requests_total{namespace=\"default\", service=\"ts-backend-demo\", status_code=~\"[45]..\"}[5m])) * 60",
+              "legendFormat": "{{method}} {{route}} {{status_code}}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "short", "decimals": 1 }
+          }
+        },
+        {
+          "id": 6,
+          "type": "timeseries",
+          "title": "Latencia HTTP p95 / p99",
+          "gridPos": { "x": 0, "y": 12, "w": 24, "h": 8 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [
+            {
+              "expr": "histogram_quantile(0.95, sum by (le, route) (rate(http_request_duration_seconds_bucket{namespace=\"default\", service=\"ts-backend-demo\"}[5m])))",
+              "legendFormat": "p95 {{route}}",
+              "refId": "A"
+            },
+            {
+              "expr": "histogram_quantile(0.99, sum by (le, route) (rate(http_request_duration_seconds_bucket{namespace=\"default\", service=\"ts-backend-demo\"}[5m])))",
+              "legendFormat": "p99 {{route}}",
+              "refId": "B"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "s" }
+          }
+        },
+        {
+          "id": 7,
+          "type": "timeseries",
+          "title": "CPU usado vs límite por pod",
+          "gridPos": { "x": 0, "y": 20, "w": 12, "h": 8 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [
+            {
+              "expr": "sum by (pod) (rate(container_cpu_usage_seconds_total{namespace=\"default\", pod=~\"ts-backend-demo-.*\", container=\"ts-backend-demo\"}[5m]))",
+              "legendFormat": "{{pod}} used",
+              "refId": "A"
+            },
+            {
+              "expr": "sum by (pod) (kube_pod_container_resource_limits{namespace=\"default\", pod=~\"ts-backend-demo-.*\", container=\"ts-backend-demo\", resource=\"cpu\", unit=\"core\"})",
+              "legendFormat": "{{pod}} limit",
+              "refId": "B"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "cores", "decimals": 3 }
+          }
+        },
+        {
+          "id": 8,
+          "type": "timeseries",
+          "title": "Memoria usada vs límite por pod",
+          "gridPos": { "x": 12, "y": 20, "w": 12, "h": 8 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [
+            {
+              "expr": "sum by (pod) (container_memory_working_set_bytes{namespace=\"default\", pod=~\"ts-backend-demo-.*\", container=\"ts-backend-demo\"})",
+              "legendFormat": "{{pod}} used",
+              "refId": "A"
+            },
+            {
+              "expr": "sum by (pod) (kube_pod_container_resource_limits{namespace=\"default\", pod=~\"ts-backend-demo-.*\", container=\"ts-backend-demo\", resource=\"memory\", unit=\"byte\"})",
+              "legendFormat": "{{pod}} limit",
+              "refId": "B"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "bytes", "decimals": 2 }
+          }
+        },
+        {
+          "id": 9,
+          "type": "timeseries",
+          "title": "Node.js heap usado",
+          "gridPos": { "x": 0, "y": 28, "w": 12, "h": 8 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [
+            {
+              "expr": "sum by (pod) (nodejs_heap_size_used_bytes{namespace=\"default\", service=\"ts-backend-demo\"})",
+              "legendFormat": "{{pod}} heap used",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "bytes" }
+          }
+        },
+        {
+          "id": 10,
+          "type": "timeseries",
+          "title": "Event loop lag p99",
+          "gridPos": { "x": 12, "y": 28, "w": 12, "h": 8 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [
+            {
+              "expr": "avg by (pod) (nodejs_eventloop_lag_p99_seconds{namespace=\"default\", service=\"ts-backend-demo\"})",
+              "legendFormat": "{{pod}} p99",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "s" }
+          }
+        },
+        {
+          "id": 11,
+          "type": "logs",
+          "title": "Logs JSON",
+          "gridPos": { "x": 0, "y": 36, "w": 24, "h": 10 },
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "targets": [
+            {
+              "expr": "{namespace=\"default\", container=\"ts-backend-demo\"} | json",
+              "refId": "A"
+            }
+          ],
+          "options": {
+            "showTime": true,
+            "showLabels": false,
+            "wrapLogMessage": true,
+            "dedupStrategy": "none",
+            "enableLogDetails": true
+          }
+        }
+      ]
+    }
