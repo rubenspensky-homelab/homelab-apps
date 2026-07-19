@@ -29,3 +29,5 @@ data:
   DOCS_OAUTH_UPSTREAM_AUTHORIZATION_URL: https://auth.rubenspensky.com/application/o/authorize/
   DOCS_OAUTH_TOKEN_URL: https://auth.rubenspensky.com/application/o/token/
   DOCS_OAUTH_REDIRECT_URI: https://ts-backend-demo.rubenspensky.com/docs
+
+  GRAFANA_DASHBOARD_URL: https://grafana.rubenspensky.com/public-dashboards/670e197c902a4c179d9e2a92812b8f07
