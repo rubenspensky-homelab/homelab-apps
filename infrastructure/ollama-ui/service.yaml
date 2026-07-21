@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama-ui
+  namespace: default
+  labels:
+    app.kubernetes.io/name: ollama-ui
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: ollama-ui
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
